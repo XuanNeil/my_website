@@ -74,3 +74,109 @@ console.log(sum);
 
 ## Examples
 1. Sử dụng `forEach()` trên sparse arrays.
+```
+const arraySparse = [1, 3, /* empty */, 7];
+let numCallbackRuns = 0;
+arraySparse.forEach((element) => {
+    console.log({element});
+    numCallbacksRuns++;
+});
+console.log(numCallbacksRuns);
+
+// { element: 1 }
+// { element: 3 }
+// { element: 7 }
+// { numCallbackRuns: 3 }
+```
+
+2. Converting a for loop to forEach
+```
+const items = ["item1", "item2", "item3"];
+const copyItems = [];
+
+// before
+for(let i = 0; i < items.length; i++){
+    copyItems.push(items[i]);
+}
+
+// after
+items.forEach((item) => {
+    copyItems.push(item);
+});
+```
+
+3. Sử dụng `thisArg`.
+- vì tham số `thisArg` được cung cấp cho `forEach`, nên nó được truyền để `callback` mỗi khi nó được gọi. callback sử dụng `this` làm giá trị.
+```
+class Counter {
+  constructor() {
+    this.sum = 0;
+    this.count = 0;
+  }
+  add(array) {
+    // Only function expressions will have its own this binding
+    array.forEach(function countEntry(entry) {
+      this.sum += entry;
+      ++this.count;
+    }, this);
+  }
+}
+
+const obj = new Counter();
+obj.add([2, 5, 9]);
+console.log(obj.count); // 3
+console.log(obj.sum); // 16
+
+```
+
+4. 1 object copy function.
+```
+const copy = (obj) => {
+  const copy = Object.create(Object.getPrototypeOf(obj));
+  const propNames = Object.getOwnPropertyNames(obj);
+  propNames.forEach((name) => {
+    const desc = Object.getOwnPropertyDescriptor(obj, name);
+    Object.defineProperty(copy, name, desc);
+  });
+  return copy;
+};
+
+const obj1 = { a: 1, b: 2 };
+const obj2 = copy(obj1); // obj2 looks like obj1 now
+
+```
+
+5. Flatten an array
+```
+const flatten = (arr) => {
+  const result = [];
+  arr.forEach((item) => {
+    if (Array.isArray(item)) {
+      result.push(...flatten(item));
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+};
+
+// Usage
+const nested = [1, 2, 3, [4, 5, [6, 7], 8, 9]];
+console.log(flatten(nested)); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+```
+
+6. Gọi `forEach()` trên `non-array objects`
+```
+const arrayLike = {
+  length: 3,
+  0: 2,
+  1: 3,
+  2: 4,
+};
+Array.prototype.forEach.call(arrayLike, (x) => console.log(x));
+// 2
+// 3
+// 4
+
+```
